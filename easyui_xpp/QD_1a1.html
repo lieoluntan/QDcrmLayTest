@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
 	<script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
 	<script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+	<script src="../js/layer.js"></script>
 	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
 	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
 	<link rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/QD_1a1.css">
@@ -39,8 +40,9 @@
       }
       else
       {
-        alert("没有登陆");
-        window.location.href="../login.html";
+        layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+          window.location.href="../login.html";
+        });
       }
       $(document).ready(function() {
         var NameOfCookie = "rsList";
@@ -70,8 +72,9 @@
 			{
 					if(m[i].value==""||m[i].value==null)
 					{
-						alert("请填写所有输入框的值"+m[i].id);
-						return false;
+//						alert("请填写所有输入框的值"+m[i].id);
+                      layer.alert("请填写所有输入框的值"+m[i].id,{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
+                      return false;
 					}
 			}//end for
 			console.log("合同前两行输入框验证，有值！！");
@@ -87,7 +90,6 @@
 			data:JSON.stringify(sendData),
 			success:function(msg){
 				xiala(msg);
-//				console.log(msg);
 			}
 		});
 		function xiala(msg) {
@@ -106,10 +108,9 @@
 			var f1=yzV1();
 			var weixin = $("#weixin").val();
 			var phone = $('#phone').val();
-//			console.log(weixin);
-//			console.log(phone);
 			if((weixin == ""||weixin == null)&&(phone == ""||phone == null)){
-			    alert("请输入微信号或手机号");
+//			    alert("请输入微信号或手机号");
+                layer.alert("请输入微信号或手机号",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
 			    return false;
 			}else if((weixin == ""||weixin == null)&&(phone !== ""&&phone !== null)){
                 $("#weixin").val("无");
@@ -118,7 +119,8 @@
 			}
             var sel = $('#empUuid').combobox("getValue");
             if(sel=="请选择渠道负责人" || sel == "" || sel == null){
-                alert("请选择渠道负责人");
+//                alert("请选择渠道负责人");
+                layer.alert("请选择渠道负责人",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
                 return false;
             }
 			var flag = false;
@@ -130,7 +132,6 @@
 			param.userName = $.cookie("ckUserName");
 			console.log(param);
 			$.ajax({
-				
 				url:"/QDcrm/aaDitch?qqiu=add",
 				type: "POST",
 				//data: JSON.stringify(param),
@@ -138,13 +139,14 @@
 				contentType: "application/json;charset=UTF-8", 
 				success:function(result){
 				var obj = JSON.parse(result);
-				alert(obj.message);
-				Conuuid = $.cookie("ck_ditchUuid",obj.data);
-				console.log(Conuuid);
-				//调用父级弹窗start
-	           	window.location.href="QD_1a1_gx1.html";
-        		//调用父级弹窗end
-				
+//				alert(obj.message);
+				var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+				var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+				layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+				  Conuuid = $.cookie("ck_ditchUuid",obj.data);
+                  //调用父级弹窗start
+                  window.location.href="QD_1a1_gx1.html";
+				});
 				}
 			 
 			});//end 结束ajax

@@ -10,6 +10,7 @@
     <script type="text/javascript" src="DataTables/datatables.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+    <script src="../js/layer.js"></script>
     <script type="text/javascript" src="../xppjs/scrollpagination.js"></script>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
@@ -28,8 +29,9 @@
       }
       else
       {
-        alert("没有登陆");
-        window.location.href="../login.html";
+        layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+          window.location.href="../login.html";
+        });
       }
       var table_ye2,a2data,curD,uuid,reMark,Dat;//全局变量
       var relod = {};
@@ -169,33 +171,35 @@
         
       //步骤3，删除按钮单击事件
         $( "#gzjl_List" ).on("click",".delbut",function() {
-        var msg = "确定删除此条信息么？";
-        if(confirm(msg) == true){
-          //要初始化一个对象，不然会报undifine未定义错误
-          var delRowData = {};
-          //获取选择那一行的数据
-          var Auuid = $(this).parent().prevAll()[0].outerText||$(this).parent().prevAll()[0].textContent;
-          //post请求体传给后台的js对象
-          var send_data = {};
-          send_data.uuid = Auuid;
-          send_data.userUuid = $.cookie("ckUserEmpUuid");
-          send_data.userName = $.cookie("ckUserName");
-          // alert( "选择的行的uuid: "+send_data);
-          //调用ajax方法传给后台接口
-          $.ajax({
-            url:"/QDcrm/aaRecord?qqiu=delete",
-            type: "POST",
-            //data: JSON.stringify(param),
-            data: JSON.stringify(send_data),
-            contentType: "application/json;charset=UTF-8",
-            success:function(result){
-              var obj = JSON.parse(result);
-              alert(obj.message);
-              window.location.reload();
-            }
-          });//end $.ajax
-          return false;
-        }
+          var that = $(this);
+          layer.confirm('确定删除此条信息么？', {icon: 3, title:'提示'}, function(index){
+            //要初始化一个对象，不然会报undifine未定义错误
+            var delRowData = {};
+            //获取选择那一行的数据
+            var Auuid = that.parent().prevAll()[0].outerText||that.parent().prevAll()[0].textContent;
+            //post请求体传给后台的js对象
+            var send_data = {};
+            send_data.uuid = Auuid;
+            send_data.userUuid = $.cookie("ckUserEmpUuid");
+            send_data.userName = $.cookie("ckUserName");
+            // alert( "选择的行的uuid: "+send_data);
+            //调用ajax方法传给后台接口
+            $.ajax({
+              url:"/QDcrm/aaRecord?qqiu=delete",
+              type: "POST",
+              //data: JSON.stringify(param),
+              data: JSON.stringify(send_data),
+              contentType: "application/json;charset=UTF-8",
+              success:function(result){
+                var obj = JSON.parse(result);
+                layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:5,icon:1},function(){
+                  window.location.reload();
+                });
+
+              }
+            });//end $.ajax
+            layer.close(index);
+          });
       } );//end 3 外圈 $('#delbut').click
     //步骤4，对话框初始配置
     $( "#dialog" ).dialog({
@@ -241,10 +245,10 @@
             var R = document.getElementById("remarkText").value==''?false:true;
             var T = $('#recordDate').datetimebox('getValue')==''?false:true;
             if(!T){
-                alert('请选择跟进日期');
+              layer.alert("请选择跟进日期",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
             }
             if(!R){
-                alert('请填写跟踪反馈');
+              layer.alert("请填写跟踪反馈",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
             }
             if(R&&T){
                console.log("有值,可以提交"); 
@@ -257,10 +261,10 @@
             var R = document.getElementById("remarkTextEdit").value==''?false:true;
             var T = $('#recordDateEdit').datetimebox('getValue')==''?false:true;
             if(!T){
-                alert('请选择跟进日期');
+              layer.alert("请选择跟进日期",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
             }
             if(!R){
-                alert('请填写跟踪反馈');
+              layer.alert("请填写跟踪反馈",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
             }
             if(R&&T){
                console.log("有值,可以提交"); 
@@ -287,9 +291,13 @@
           contentType: "application/json;charset=UTF-8",
           success:function(result){
             var obj = JSON.parse(result);
-            alert(obj.message);
-            $("#gzjl_List").prepend("<div class=\"show_box\"style=\"border:1px solid #d9d9d9;border-radius:5px;margin-top:20px;margin-right:20px;padding:10px 20px;\"><div class=\"jl_date\"style=\"border-bottom:1px solid #d9d9d9;height:50px;line-height:50px;color:#757574;\">"+add_data.recordDate+"</div><div class=\"jl_remark\"style=\"line-height:40px;font-size:20px;margin-bottom:20px;\">"+add_data.remarkText+"</div><div class=\"jl_uuid\"style=\"display:none;\">"+obj.data+"</div><div class=\"btn-box btn\" style=\"margin-top:30px;\"><button  class=\"easyui-linkbutton btn-qr opener\" >修改</button><button  class=\"easyui-linkbutton btn-qr delbut\" >删除</button></div></div>");
-            $('#ffAdd').form('clear');
+            var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+            var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+            layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(index){
+              $("#gzjl_List").prepend("<div class=\"show_box\"style=\"border:1px solid #d9d9d9;border-radius:5px;margin-top:20px;margin-right:20px;padding:10px 20px;\"><div class=\"jl_date\"style=\"border-bottom:1px solid #d9d9d9;height:50px;line-height:50px;color:#757574;\">"+add_data.recordDate+"</div><div class=\"jl_remark\"style=\"line-height:40px;font-size:20px;margin-bottom:20px;\">"+add_data.remarkText+"</div><div class=\"jl_uuid\"style=\"display:none;\">"+obj.data+"</div><div class=\"btn-box btn\" style=\"margin-top:30px;\"><button  class=\"easyui-linkbutton btn-qr opener\" >修改</button><button  class=\"easyui-linkbutton btn-qr delbut\" >删除</button></div></div>");
+              $('#ffAdd').form('clear');
+              layer.close(index);
+            });
           }
         });
       }

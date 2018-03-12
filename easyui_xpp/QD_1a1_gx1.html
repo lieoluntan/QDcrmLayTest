@@ -11,12 +11,13 @@
     
     <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>
     <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
-     <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
-     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
-     <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
-     <link rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/default/easyui.css">
+    <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
+    <script src="../js/layer.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/1a1_gx1.css">
-   <script>
+    <script>
      var NameOfCookie="rsList";
      var c = document.cookie.indexOf(NameOfCookie+"=");
      if (c != -1)
@@ -25,8 +26,9 @@
      }
      else
      {
-       alert("没有登陆");
-       window.location.href="../login.html";
+       layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+         window.location.href="../login.html";
+       });
      }
         $(document).ready(function(){
           var NameOfCookie = "rsList";
@@ -50,10 +52,10 @@
             var R = document.getElementById("remarkText").value==''?false:true;
             var T = $('#recordDate').datetimebox('getValue')==''?false:true;
             if(!T){
-                alert('请选择跟进日期');
+              layer.alert("请选择跟进日期",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
             }
             if(!R){
-                alert('请填写备注');
+              layer.alert("请填写备注",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:0});
             }
             if(R&&T){
                console.log("有值,可以提交"); 
@@ -79,14 +81,17 @@
                     data: JSON.stringify(param),
                     contentType: "application/json;charset=UTF-8",
                     success: function (result) {
-                        var obj = JSON.parse(result);
-                        console.log(obj);
-                        alert(obj.message);
-                         obj.message == '新增成功'?window.location.href="QD_1a3.html":window.location.href="QD_1a1_gx1.html";
+                      var obj = JSON.parse(result);
+                      var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                      var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                      layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+                        obj.message == '新增成功'?window.location.href="QD_1a3.html":window.location.href="QD_1a1_gx1.html";
                         //调用父级弹窗start
-                         var $parent = self.parent.$;
-                         $parent('#menu_a3').click();
+                        var $parent = self.parent.$;
+                        $parent('#menu_a3').click();
                         //调用父级弹窗end
+                      });
+
                     }
                 }); 
             }

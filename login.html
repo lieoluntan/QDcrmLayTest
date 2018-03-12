@@ -16,6 +16,8 @@
         <script src="assets/js/supersized-init.js"></script>-->
         <script src="assets/js/scripts.js"></script>
 
+        <!--<script type="text/javascript" src="easyui_xpp/jquery-easyui-136/jquery.min.js"></script>-->
+        <script src="js/layer.js"></script>
         <!-- 新的 -->
         <script type="text/javascript" src="xppjs/jquery.serialize-object.js"></script>
         <script type="text/javascript" src="xppjs/jquery.cookie.js"></script>
@@ -87,7 +89,7 @@
                                 window.location.href="xppu8.html";
                             }
                             else{
-                                alert(result2obj.message);
+                              layer.alert(JSON.parse(result).message,{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:2});
                             }
                         }//end 方法 success
 

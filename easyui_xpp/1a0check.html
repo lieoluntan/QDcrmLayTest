@@ -11,7 +11,7 @@
     <script type="text/javascript" src="DataTables/datatables.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
-    
+    <script src="../js/layer.js"></script>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
@@ -31,14 +31,19 @@
             data: JSON.stringify(send_data),
             contentType: "application/json;charset=UTF-8",
             success:function(result){
+                var i = JSON.parse(result).message.indexOf('不存在')==-1 ? 1 : 0;
                 if(Url==ph){
                     tableShow(JSON.parse(result).data);
-                    alert(JSON.parse(result).message);
+
+                  console.log(i);
+                    layer.alert(JSON.parse(result).message, {icon: i});
+//                    alert(JSON.parse(result).message);
                 }
                 if(Url==we){
                   console.log(11);
                   tableWShow(JSON.parse(result).data);
-                  alert(JSON.parse(result).message);
+                  layer.alert(JSON.parse(result).message, {icon: i});
+//                  alert(JSON.parse(result).message);
                 }
             }
           });

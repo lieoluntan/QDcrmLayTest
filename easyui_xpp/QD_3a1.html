@@ -9,7 +9,7 @@
     <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
     <script type="text/javascript" src="DataTables/datatables.js"></script>
-
+    <script src="../js/layer.js"></script>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
@@ -23,8 +23,9 @@
       }
       else
       {
-        alert("没有登陆");
-        window.location.href="../login.html";
+        layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+          window.location.href="../login.html";
+        });
       }
         $(document).ready(function(){
           var NameOfCookie = "rsList";
@@ -114,24 +115,24 @@
                 objSel.roleList = $('#roleList').combobox("getValues");
                 console.log(objSel);
                 if(objSel.uName ==""||objSel.uName==null){
-                    alert("请输入用户姓名");
-                    return false;
+                  layer.alert("请输入用户姓名",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                  return false;
                 }
                 if(objSel.uLogUser ==""||objSel.uLogUser==null){
-                    alert("请输入用户账号");
-                    return false;
+                  layer.alert("请输入用户账号",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                  return false;
                 }
                 if(objSel.uPassWord ==""||objSel.uPassWord==null){
-                    alert("请输入用户密码");
-                    return false;
+                  layer.alert("请输入用户密码",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                  return false;
                 }
                 if(objSel.roleList =="请选择角色"||objSel.roleList==null||objSel.roleList==""){
-                    alert("请选择用户角色");
-                    return false;
+                  layer.alert("请选择用户角色",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                  return false;
                 }
                 if(objSel.empUuid =="请选择员工"||objSel.empUuid==null||objSel.roleList==""){
-                    alert("请选择公司员工");
-                    return false;
+                  layer.alert("请选择公司员工",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                  return false;
                 }
                 $.ajax({
                     url:"/QDcrm/aaUserPK?qqiu=add",
@@ -139,11 +140,13 @@
                     contentType:"application/json;charset=UTF-8",
                     data:JSON.stringify(objSel),
                     success:function(result){
-                        var obj = {};
-                        obj = JSON.parse(result);
-                      alert(obj.message);
+                      var obj = JSON.parse(result);
+                      var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                      var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                      layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
                         var $parent = self.parent.$;
                         $parent('#menu_c2').click();
+                      });
                     }
                 });
             });

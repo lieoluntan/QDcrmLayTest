@@ -15,7 +15,7 @@
         <!--<script src="assets/js/supersized.3.2.7.min.js"></script>
         <script src="assets/js/supersized-init.js"></script>-->
         <script src="../assets/js/scripts.js"></script>
-
+        <script src="../js/layer.js"></script>
         <!-- 新的 -->
         <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
         <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
@@ -42,8 +42,9 @@
           }
           else
           {
-            alert("没有登陆");
-            window.location.href="../login.html";
+            layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+              window.location.href="../login.html";
+            });
           }
             $(document).ready(function() {
               var NameOfCookie = "rsList";
@@ -67,13 +68,13 @@
                     send_edit_data.uLogUser = document.getElementById("uLogUser").value;
                     send_edit_data.uPassWord = document.getElementById("uPassWord").value;
                     if(send_edit_data.uPassWord !=$.cookie('keyMM')){
-                        alert("旧密码输入错误");
-                        return false;
+                      layer.alert("旧密码输入错误",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                      return false;
                     }
                     send_edit_data.uNewPassWord = document.getElementById("uNewPassWord1").value;
                     if(send_edit_data.uNewPassWord ==""||send_edit_data.uNewPassWord ==null){
-                        alert("新密码不能为空");
-                        return false;
+                      layer.alert("新密码不能为空",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                      return false;
                     }
                     if(document.getElementById("uNewPassWord1").value == document.getElementById("uNewPassWord2").value){
                      
@@ -83,13 +84,15 @@
                             data: JSON.stringify(send_edit_data),
                             contentType: "application/json;charset=UTF-8",
                             success:function(result){
-                                var obj = JSON.parse(result);
-                                alert(obj.message);
+                              var obj = JSON.parse(result);
+                              layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:5,icon:1}, function(){
                                 window.location.href="../login.html";
+                              });
+
                             }//end 方法 success
                         });
                     }else {
-                        alert("两次输入的密码不一致，请重新输入");
+                        layer.alert("两次输入的密码不一致，请重新输入",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
                         return false;
                     }
 
