@@ -10,16 +10,11 @@
 	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="DataTables/datatables.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
-	
+	<script src="../js/layer.js"></script>
 	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
 	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
     <link   rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/QD_3a6.css"/>
-
-
-
-
-
     <style>
         .dataTables_wrapper{
             top:-67px;
@@ -62,8 +57,6 @@
         }
     </style>
     <!-- <script src="../js/jquery-1.8.2.js" type="text/javascript"></script> -->
-
-
 	<script type="text/javascript">
       var NameOfCookie="rsList";
       var c = document.cookie.indexOf(NameOfCookie+"=");
@@ -73,8 +66,9 @@
       }
       else
       {
-        alert("没有登陆");
-        window.location.href="../login.html";
+        layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+          window.location.href="../login.html";
+        });
       }
     $(document).ready(function() {
       var NameOfCookie = "rsList";
@@ -184,10 +178,9 @@
                 data: JSON.stringify(send_data),
                 contentType: "application/json;charset=UTF-8",
                 success:function(result){
-                    var obj = JSON.parse(result);
-                    alert(obj.message);
-                    table.row( $(this).parents('tr') ).ajax.reload();
-
+                  var obj = JSON.parse(result);
+                  layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:5,icon:1});
+                  table.row( $(this).parents('tr') ).ajax.reload();
                 }
 
             });//end $.ajax
@@ -220,23 +213,21 @@
          send_data.uuid = Auuid;
          // alert( "选择的行的uuid: "+send_data);
          //调用ajax方法传给后台接口
-         $.ajax({
-                
-                url:"/QDcrm/aaDepartment?qqiu=delete",
-                type: "POST",
-                //data: JSON.stringify(param),
-                data: JSON.stringify(send_data),
-                contentType: "application/json;charset=UTF-8", 
-                success:function(result){
-                    var obj = JSON.parse(result);
-                    alert(obj.message);
-                    window.location.reload();
+         layer.confirm('确定要删除?', {icon: 3, title:'提示'}, function(index){
+            $.ajax({
+              url:"/QDcrm/aaDepartment?qqiu=delete",
+              type: "POST",
+              data: JSON.stringify(send_data),
+              contentType: "application/json;charset=UTF-8",
+              success:function(result){
+                layer.alert(JSON.parse(result).message,{skin:'layui-layer-molv',closeBtn:1,anim:5,icon:1});
+              }
 
-                }
-             
             });//end $.ajax
-
-         table.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+              /* 弹窗事件 */
+            table.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+            layer.close(index);
+          });
     } );//end 3 外圈 $('#delbut').click
 
     //步骤4，对话框初始配置
@@ -297,18 +288,18 @@
             send_edit_data.remark = document.ffname.remark.value;
             console.log(send_edit_data);
             $.ajax({
-                
                 url:"/QDcrm/aaDepartment?qqiu=edit",
                 type: "POST",
-                //data: JSON.stringify(param),
                 data: JSON.stringify(send_edit_data),
                 contentType: "application/json;charset=UTF-8", 
                 success:function(result){
                     var obj = JSON.parse(result);
-                    alert(obj.message);
-                   window.location.reload();
+                    var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                    var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+                        window.location.reload();
+                    });
                 }
-             
             });
 
 

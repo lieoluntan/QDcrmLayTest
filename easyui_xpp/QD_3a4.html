@@ -9,6 +9,7 @@
     <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
+    <script src="../js/layer.js"></script>
     <link  rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
     <link  rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
     <link  rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/3a4.css"/>
@@ -113,8 +114,9 @@
   }
   else
   {
-    alert("没有登陆");
-    window.location.href="../login.html";
+    layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+      window.location.href="../login.html";
+    });
   }
     $(document).ready(function(){
       var NameOfCookie = "rsList";
@@ -203,22 +205,25 @@
         $("#btn-del").click(function(){
             var delTableTr = {};
             delTableTr = tabData.row(".selected").data();
-            tabData.row(".selected").remove().draw(false);//在页面进行删除操作
             var delCon = delTableTr.uuid;
             var delData = {};
             delData.uuid = delCon;
             /* ajax调用数据接口 */
-            $.ajax({
-                url:"/QDcrm/aaRole?qqiu=delete",
-                type:"POST",
-                data:JSON.stringify(delData),
-                contentType:"application/json;charset=UTF-8",
-                success:function(result){
-                    var obj = JSON.parse(result);
-                    alert(obj.message);
-                    window.location.reload();//页面刷新
-                }
-            });
+            layer.confirm('确定要删除?', {icon: 3, title:'提示'}, function(index){
+                $.ajax({
+                  url:"/QDcrm/aaRole?qqiu=delete",
+                  type: "POST",
+                  data:JSON.stringify(delData),
+                  contentType: "application/json;charset=UTF-8",
+                  success:function(result){
+                    layer.alert(JSON.parse(result).message,{skin:'layui-layer-molv',closeBtn:1,anim:5,icon:1});
+//                    window.location.reload();
+                    tabData.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+                  }
+                });//end $.ajax
+                  /* 弹窗事件 */
+                layer.close(index);
+              });
         });
         /* 第四步：点击编辑按钮出现弹窗 */
         //获取选中行的值，并把值给到弹窗相应的位置
@@ -263,11 +268,11 @@
             sendTab.name = $('input[name = "name"]').val();
             sendTab.remark = $('input[name = "remark"]').val();
             if(sendTab.name==""||sendTab.name==null){
-                alert("请输入角色信息");
+                layer.alert("请输入角色",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
                 return false;
             }
             if(sendTab.remark==""||sendTab.remark==null){
-                alert("请输入备注信息");
+                layer.alert("请输入备注信息",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
                 return false;
             }
             var root = $('#tree').tree("getRoot");
@@ -284,10 +289,12 @@
                 data:JSON.stringify(sendTab),
                 contentType:"application/json;charset=UTF-8",
                 success:function(result){
-                    var obj = {};
-                    obj = JSON.parse(result);
-                    alert(obj.message);
+                  var obj = JSON.parse(result);
+                  var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                  var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                  layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
                     window.location.reload();
+                  });
                 }
             })
         });

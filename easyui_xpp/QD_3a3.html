@@ -9,7 +9,7 @@
     <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
     <script type="text/javascript" src="DataTables/datatables.js"></script>
-
+    <script src="../js/layer.js"></script>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
     <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
@@ -52,8 +52,9 @@
   }
   else
   {
-    alert("没有登陆");
-    window.location.href="../login.html";
+    layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+      window.location.href="../login.html";
+    });
   }
     $(document).ready(function(){
           var NameOfCookie = "rsList";
@@ -79,12 +80,12 @@
             send_data.name = name;
             send_data.remark = noteInfo;
             if(send_data.name =="" ||send_data.name ==null ){
-                alert("请输入角色");
+                layer.alert("请输入角色",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
                 return false;
             }
             if(send_data.remark =="" ||send_data.remark ==null ){
-            alert("请输入备注");
-            return false;
+                layer.alert("请输入备注",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+                return false;
             }
 
             var treeNodes = $("#tree").tree('getChecked');//获取已选中的元素
@@ -98,7 +99,7 @@
             }
             send_data.rsList = treeCount;
               if(send_data.rsList =="" ||send_data.rsList ==null ){
-                alert("请勾选权限");
+                layer.alert("请勾选权限",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
                 return false;
               }
             console.log(send_data);
@@ -108,11 +109,13 @@
                 data: JSON.stringify(send_data),
                 contentType: "application/json;charset=UTF-8",
                 success:function(result){
-                    var obj = {};
-                    obj = JSON.parse(result);
-                    alert(obj.message);
-                    var $parent = self.parent.$;
-                    $parent('#menu_c4').click();
+                    var obj = JSON.parse(result);
+                    var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                    var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+                        var $parent = self.parent.$;
+                        $parent('#menu_c4').click();
+                    });
                 }
             });
         });

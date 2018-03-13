@@ -336,16 +336,18 @@
             $.ajax({
                 url:"/QDcrm/aaDitch?qqiu=edit",
                 type: "POST",
-                //data: JSON.stringify(param),
                 data: JSON.stringify(send_edit_data),
                 contentType: "application/json;charset=UTF-8", 
                 success:function(result){
                     var obj = JSON.parse(result);
-                alert(obj.message);
-                table.ajax.reload();
-                $( "#dialog" ).dialog( "close" );
+                    var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                    var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(index){
+                      table.ajax.reload();
+                      $( "#dialog" ).dialog( "close" );
+                      layer.close(index);
+                    });
                 }
-             
             });
 
 

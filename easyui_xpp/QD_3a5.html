@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
 	<script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
 	<script type="text/javascript" src="DataTables/datatables.js"></script>
-	
+	<script src="../js/layer.js"></script>
 	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
 	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
 	<link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
@@ -27,8 +27,9 @@
       }
       else
       {
-        alert("没有登陆");
-        window.location.href="../login.html";
+        layer.alert('没有登录',{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5}, function(){
+            window.location.href="../login.html";
+        });
       }
       $(document).ready(function() {
         var NameOfCookie = "rsList";
@@ -50,26 +51,31 @@
 		function submitForm(){
 			//$('#ff').form('submit');
 			var param = $("#ff").serializeObject();
-            if(param.name==''){
-                alert('部门名称不能为空');
-			}else{
-                $.ajax({
+      if(param.name==''){
+          layer.alert("部门名称不能为空",{skin:'layui-layer-molv',closeBtn:1,anim:6,icon:5});
+      }else{
+          $.ajax({
+              url:"/QDcrm/aaDepartment?qqiu=add",
+              type: "POST",
+              data: JSON.stringify(param),
+              contentType: "application/json;charset=UTF-8",
+              success:function(result){
+                  // var obj = JSON.parse(result);
+                  // alert(obj.message);
+                  // //调用父级弹窗start
+                  // var $parent = self.parent.$;
+                  // $parent('#menu_c6').click();
+                  //调用父级弹窗end
+                  var obj = JSON.parse(result);
+                  var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                  var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                  layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+                      var $parent = self.parent.$;
+                      $parent('#menu_c6').click();
+                  });
+              }
 
-                    url:"/QDcrm/aaDepartment?qqiu=add",
-                    type: "POST",
-                    //data: JSON.stringify(param),
-                    data: JSON.stringify(param),
-                    contentType: "application/json;charset=UTF-8",
-                    success:function(result){
-                        var obj = JSON.parse(result);
-                        alert(obj.message);
-                        //调用父级弹窗start
-                        var $parent = self.parent.$;
-                        $parent('#menu_c6').click();
-                        //调用父级弹窗end
-                    }
-
-                });
+          });
 			}
 
 			

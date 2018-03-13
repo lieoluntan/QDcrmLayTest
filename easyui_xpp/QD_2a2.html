@@ -6,15 +6,15 @@
 	
     <script type="text/javascript" src="jquery-easyui-136/jquery.min.js"></script>  
 
-	<script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
+	  <script type="text/javascript" src="jquery-easyui-136/jquery.easyui.min.js"></script>
+	  <script type="text/javascript" src="jquery-easyui-136/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="DataTables/datatables.js"></script>
     <script type="text/javascript" src="DataTables/Buttons-1.4.2/js/dataTables.buttons.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.serialize-object.js"></script>
     <script type="text/javascript" src="../xppjs/jquery.cookie.js"></script>
     <script src="../js/layer.js"></script>
-	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
-	<link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
+	  <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+	  <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/Buttons-1.4.2/css/buttons.dataTables.css"/>
     <link rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/2a2.css">
@@ -318,11 +318,14 @@
                 contentType: "application/json;charset=UTF-8", 
                 success:function(result){
                     var obj = JSON.parse(result);
-                    alert(obj.message);
-                table.ajax.reload();
-                $( "#dialog" ).dialog( "close" );
+                    var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
+                    var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
+                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(index){
+                      table.ajax.reload();
+                      $( "#dialog" ).dialog( "close" );
+                      layer.close(index);
+                    });
                 }
-             
             });
 
 
