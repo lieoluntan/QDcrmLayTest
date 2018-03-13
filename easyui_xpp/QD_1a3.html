@@ -67,6 +67,7 @@
         });
       }
         $(document).ready(function() {
+          var index;
           var NameOfCookie = "rsList";
           var c = document.cookie.indexOf(NameOfCookie + "=");
           // alert(c);
@@ -96,6 +97,16 @@
                 }//end for
             }
             funBtn();
+            // layer编辑弹窗
+            function editWin(){
+                index = layer.open({
+                    type: 1,
+                    title:'编辑',
+                    closeBtn: 1,
+                    area: ['970px', ''],
+                    content: $('#dialog')       
+                });
+            }
             /*第零步：把datatables插件的警告窗变成控制台打印*/
             $.fn.dataTable.ext.errMode = 'none';
 
@@ -114,12 +125,11 @@
                 var obj = {};
                 obj = JSON.parse(msg);
                 var objData = obj.data;
-                $('#empUuid').combobox({
-                    data: objData,
-                    valueField: 'uuid',
-                    textField: 'name',
-                    selectOnNavigation: false
-                })
+                var html = '';
+                for(var i=0;i<objData.length;i++){
+                    html+='<option value='+objData[i].uuid+'>'+objData[i].name+'</option>'
+                }
+                $('#empUuid').append(html);
             }
 
             //取出登陆时存的cookie
@@ -280,20 +290,6 @@
                 layer.close(index);
               });
             } );//end 外圈 $('#delbut').click
-
-            //步骤4，对话框初始配置
-            $( "#dialog" ).dialog({
-                autoOpen: false,
-                show: {
-                    effect: "blind",
-                    duration: 1000
-                },
-                hide: {
-                    effect: "explode",
-                    duration: 1000
-                }
-            });//end dialog
-
             //步骤5，编辑打开事件
             $( "#opener" ).click(function() {
 
@@ -309,11 +305,12 @@
                 document.ffname2a2.company.value= delRowData.company;
                 $('#moneyRate').numberbox('setValue',delRowData.moneyRate);
                 document.ffname2a2.job.value= delRowData.job;
-                $('#empUuid').combobox("setValue",delRowData.empUuid);
+                document.ffname2a2.empUuid.value= delRowData.empUuid;
+                // $('#empUuid').combobox("setValue",delRowData.empUuid);
                 document.ffname2a2.rank.value= delRowData.rank;
                 document.ffname2a2.source.value= delRowData.source;
                 document.ffname2a2.remark.value= delRowData.remark;
-                $('#dialog').dialog('open');
+                editWin();
                 $.cookie('ck_uuid_ditch', delRowData.uuid);//uuid
                 $.cookie('ck_name', delRowData.name);//姓名
                 $.cookie('ck_phone', delRowData.phone);//电话
@@ -348,11 +345,13 @@
                         var obj = JSON.parse(result);
                         var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
                         var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
-                        layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(index){
-                          table.ajax.reload();
-                          $( "#dialog" ).dialog( "close" );
-                          layer.close(index);
-                        });
+                        layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:0,anim:j,icon:i}, function(indexone){
+                              layer.close(indexone);
+                              if(obj.message.indexOf('重复')==-1){
+                                layer.close(index);
+                                table.ajax.reload();
+                              }
+                            });
                     }
                 });
 
@@ -375,17 +374,7 @@
             });
             //步骤7，关闭修改对话框
             $( "#close" ).click(function() {
-                // alert("进入关闭方法");
-
-                $( "#dialog" ).dialog( "close" );
-
-                // //调用父级弹窗start
-                //     var $parent = self.parent.$;
-                //     $parent('#pwin').style.display = "none";
-                //调用父级弹窗end
-                // parent.document.getElementById("#pwin").style.display="none";
-                // alert("调了关闭方法");
-
+               layer.close(index);
             });//end 7 外圈 close
 
 
@@ -454,7 +443,7 @@
 
 </div><!-- end div  id="fen3a3_container"-->
 
-<div id="dialog" title="修改" closed="true" class="easyui-dialog"  style="width:980px;height: 700px;padding-left:20px;">
+<div id="dialog"style="width:950px;height: 540px;padding-left:20px;display:none;">
     <div  class="tit_style">
         <h3>基础信息</h3>
     </div>
@@ -498,7 +487,8 @@
             <tr>
                 <td class="name-s" style="padding:0;width:52px;">负责人</td>
                 <td style="margin-left:20px;">
-                    <input id="empUuid" name="empUuid" data-options="editable:true" class="easyui-combobox yzss" style="width: 200px; height: 36px; color:#646464; display: none;" value="请选择渠道负责人" comboname="empUuid">
+                    <!-- <input id="empUuid" name="empUuid" data-options="editable:true" class="easyui-combobox yzss" style="width: 200px; height: 36px; color:#646464; display: none;" value="请选择渠道负责人" comboname="empUuid"> -->
+                    <select name="empUuid" id="empUuid" class="yz-box yzss sel_s"></select>
                 </td>
                 <td class="name-s" style="padding-right: 0;padding-left:70px; ">渠道等级</td>
                 <td style="margin-left:20px;">
