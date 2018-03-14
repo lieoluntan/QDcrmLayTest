@@ -47,8 +47,12 @@
         table.dataTable.display tbody tr.even td.sorting_1{
             background-color: white;
         }
-        .layui-form input[type=checkbox], .layui-form input[type=radio], .layui-form select {
-            display:block;
+        .layui-input{
+            border-radius: 5px;
+        }
+        .layui-input-block{
+            margin-left: 0;
+            width:200px;
         }
     </style>
 
@@ -203,7 +207,12 @@
                 html+='<option value='+objData[i].uuid+'>'+objData[i].name+'</option>'
             }
             $('#empUuid').append(html);
+            layui.use('form',function () {
+                var form = layui.form;
+                form.render();
+            });
         }
+
 
         $('#example tbody').on( 'click', 'button', function () {
             var send_data = {};
@@ -291,8 +300,8 @@
          document.ffname2a2.company.value= delRowData.company;
         $('#moneyRate').numberbox('setValue',delRowData.moneyRate);
          document.ffname2a2.job.value= delRowData.job;
-         document.ffname2a2.empUuid.value= delRowData.empUuid;
-        // 、$('#empUuid').value=delRowData.empUuid;
+        $('#empUuid').val(delRowData.empUuid);
+        console.log(delRowData.empUuid);
          document.ffname2a2.rank.value= delRowData.rank;
          document.ffname2a2.source.value= delRowData.source;
          document.ffname2a2.remark.value= delRowData.remark;
@@ -460,19 +469,25 @@
     <div  class="tit_style">
         <h3>基础信息</h3>
     </div>
-    <form id="ffname2a2" name="ffname2a2"class="layui-form" method="post" >
+    <form id="ffname2a2" name="ffname2a2" class="layui-form" method="post" >
         <table class="tab-style">
             <!-- 第一行 -->
             <tr>
                 <td class="name-s" style="padding-left:0">姓名</td>
                 <td><input  type="text" name="name" class="yzss" placeholder="请输入姓名"></input></td>
-                <td class="name-s">性别</td>
-                <td>
-                    <select  name="sex" class="yzss sel_s">
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                    </select>
-                </td>
+                <div class="layui-form-item">
+                    <td class="name-s">性别</td>
+                    <td>
+                        <div class="layui-input-block">
+                            <select  name="sex">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+
+                    </td>
+                </div>
+
                 <td class="name-s">手机</td>
                 <td><input  type="text" name="phone" class="yzss" placeholder="请输入电话号码"></input></td>
             </tr>
@@ -501,17 +516,22 @@
                 <td class="name-s" style="padding:0;width:52px;">负责人</td>
                 <td style="margin-left:20px;">
                     <!-- <input id="empUuid" name="empUuid" data-options="editable:true" class="easyui-combobox yzss" style="width: 200px; height: 36px; color:#646464; display: none;" value="请选择渠道负责人" comboname="empUuid"> -->
-                    <div class="layui-input-block"><select name="empUuid" id="empUuid" class="yz-box yzss sel_s" lay-verify="" lay-search></select></div>
+                    <div class="layui-input-block"><select name="empUuid" id="empUuid" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter"></select></div>
                 </td>
-                <td class="name-s" style="padding-right: 0;padding-left:70px; ">渠道等级</td>
-                <td style="margin-left:20px;">
-                    <select  name="rank" class="yz-box yzss sel_s">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
-                    </select>
-                </td>
+                <div class="layui-form-item">
+                    <td class="name-s" style="padding-right: 0;padding-left:70px; ">渠道等级</td>
+                    <td style="margin-left:20px;" >
+                        <div class="layui-input-block">
+                            <select  name="rank">
+                                <option>A</option>
+                                <option>B</option>
+                                <option>C</option>
+                                <option>D</option>
+                            </select>
+                        </div>
+
+                    </td>
+                </div>
                 <td class="name-s" style="padding-right: 0;padding-left:65px; ">佣金比例</td>
                 <td style="margin-left:20px;">
                     <input type="text" name="moneyRate" id="moneyRate" class="easyui-numberbox yzss yz-box" style="height: 36px;" placeholder="请输入佣金">
@@ -540,5 +560,5 @@
     </div>
     <!-- 按钮div结束 -->
 </div><!-- end id=dialog -->
-<script src="../js/layer.js"></script>
+<script src="../js/layui.all.js"></script>
 </html>
