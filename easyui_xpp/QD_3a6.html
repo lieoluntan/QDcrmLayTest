@@ -72,6 +72,7 @@
       }
     $(document).ready(function() {
       var NameOfCookie = "rsList";
+      var index;
       var c = document.cookie.indexOf(NameOfCookie + "=");
       // alert(c);
       if (c != -1) {
@@ -99,6 +100,16 @@
             }//end for
         }
         funBtn();
+        // layer编辑弹窗
+        function editWin(){
+            index = layer.open({
+                type: 1,
+                title:'编辑',
+                closeBtn: 1,
+                area: ['820px', '510px'],
+                content: $('#dialog')       
+            });
+        }
         /*第零步：把datatables插件的警告窗变成控制台打印*/
         $.fn.dataTable.ext.errMode = 'none';
     //步骤1,展示列表数据
@@ -229,21 +240,6 @@
             layer.close(index);
           });
     } );//end 3 外圈 $('#delbut').click
-
-    //步骤4，对话框初始配置
-    $( "#dialog" ).dialog({
-      autoOpen: false,
-      show: {
-        effect: "blind",
-        duration: 1000
-      },
-      hide: {
-        effect: "explode",
-        duration: 1000
-      }
-    });//end 4 外圈 dialog
-
-
     //步骤5，编辑打开事件
     $( "#opener" ).click(function() {
 
@@ -256,20 +252,7 @@
          document.ffname.remark.value= delRowData.remark;
 
         var n1 = document.ffname.name.value; //定义个变量n接收表单中的值
-//        alert(n1); //alert是弹出对话框，会弹出一个123的对话框
-        //调用父级弹窗start
-            // var $parent = self.parent.$;
-            // $parent('#pwin').window({
-            //     modal:true,
-            //     width:1000,
-            //     height:800,
-            //     content:$('#dialog').html(),
-            //     title:'父级窗口'
-            // });
-        //调用父级弹窗end
-      $( "#dialog" ).dialog( "open" );
-    
-
+        editWin();
     });//end 5 外圈 opener 结束打开对话框
 
     //步骤6，编辑确定事件
@@ -296,8 +279,15 @@
                     var obj = JSON.parse(result);
                     var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
                     var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
-                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+                    // layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
+                    //     window.location.reload();
+                    // });
+                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:0,anim:j,icon:i}, function(indexone){
+                      layer.close(indexone);
+                      if(obj.message.indexOf('重复')==-1){
+                        layer.close(index);
                         window.location.reload();
+                      }
                     });
                 }
             });
@@ -308,10 +298,8 @@
 
     //步骤7，关闭修改对话框
     $( "#close" ).click(function() { 
-
-        $( "#dialog" ).dialog( "close" );
-
-        });//end 7 外圈 close
+        layer.close(index);
+    });//end 7 外圈 close
     
 } );//end 最外层 $(document).ready
 
@@ -371,7 +359,7 @@
 
 	</div><!-- end div  id="fen3a3_container"-->
 
-    <div id="dialog" title="部门编辑" closed="true" style="width:800px;height: 460px;padding-left: 20px;">
+    <div id="dialog"style="width:800px;height: 460px;padding-left: 20px;display:none;">
                 <!--<p>这是一个动画显示的对话框</p>-->
                 <form id="ff" name="ffname" method="post" > 
 

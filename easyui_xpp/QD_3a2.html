@@ -68,6 +68,7 @@
       }
         $(document).ready(function(){
           var NameOfCookie = "rsList";
+          var index;
           var c = document.cookie.indexOf(NameOfCookie + "=");
           // alert(c);
           if (c != -1) {
@@ -94,6 +95,16 @@
                 }//end for
             }
             funBtn();
+            // layer编辑弹窗
+            function editWin(){
+                index = layer.open({
+                    type: 1,
+                    title:'编辑',
+                    closeBtn: 1,
+                    area: ['400px', '480px'],
+                    content: $('#dialog')       
+                });
+            }
             /*第零步：把datatables插件的警告窗变成控制台打印*/
             $.fn.dataTable.ext.errMode = 'none';
             /* 第一步：展示数据列表 */
@@ -170,18 +181,6 @@
                 layer.close(index);
               });
              });
-             //步骤4，对话框初始配置
-                $( "#dialog" ).dialog({
-                  autoOpen: false,
-                  show: {
-                    effect: "blind",
-                    duration: 1000
-                  },
-                  hide: {
-                    effect: "explode",
-                    duration: 1000
-                  }
-                });//end 4 外圈 dialog
             /* 第四步：点击编辑按钮出现弹窗 */
             //获取选中行的值，并把值给到弹窗相应的位置
             /* S--获取下拉数据 */
@@ -251,7 +250,7 @@
                 }
                 $('#infoSel').combobox('setValues',arr);
                 $('#ffSel').combobox('setValues',[delTableTr.empUuid]);
-                $( "#dialog" ).dialog( "open" );//出现编辑弹窗
+                editWin();
 
             });
             /* 第五步：点击提交按钮事件 */
@@ -316,7 +315,7 @@
             /* 对话框关闭事件 */
 
             $('.panel-tool ,#close-d').click(function(){
-                $( "#dialog" ).dialog( "close" );
+                 layer.close(index);
             });
         });
     </script>
@@ -360,7 +359,7 @@
     <!--E--表格结束 -->
 </div>
 <!-- S--编辑弹窗 -->
-<div id="dialog" title="用户编辑" class="easyui-dialog" closed="true" style="width:400px;height: 480px;padding-left: 20px;left:300px;top:160px;">
+<div id="dialog" style="width:370px;height: 430px;padding-left: 20px;left:300px;top:160px;display:none;">
     <form id="form-id" name="form_data">
         <table class="tab-style">
             <tr>

@@ -70,6 +70,7 @@
       }
     $(document).ready(function() {
       var NameOfCookie = "rsList";
+      var index;
       var c = document.cookie.indexOf(NameOfCookie + "=");
       // alert(c);
       if (c != -1) {
@@ -97,6 +98,16 @@
             }//end for
         }
         funBtn();
+        // layer编辑弹窗
+        function editWin(){
+            index = layer.open({
+                type: 1,
+                title:'编辑',
+                closeBtn: 1,
+                area: ['990px', '530px'],
+                content: $('#dialog')       
+            });
+        }
         /*第零步：把datatables插件的警告窗变成控制台打印*/
         $.fn.dataTable.ext.errMode = 'none';
         var tabShowText;
@@ -232,19 +243,6 @@
         layer.close(index);
       });
     } );//end 3 外圈 $('#delbut').click
-
-    //步骤4，对话框初始配置
-    $( "#dialog" ).dialog({
-      autoOpen: false,
-      show: {
-        effect: "blind",
-        duration: 1000
-      },
-      hide: {
-        effect: "explode",
-        duration: 1000
-      }
-    });//end 4 外圈 dialog
       $.ajax({
 
         url:"/QDcrm/aaDepartment?qqiu=list",
@@ -293,7 +291,7 @@
         var n1 = document.ffname.name.value; //定义个变量n接收表单中的值
 //        alert(n1); //alert是弹出对话框，会弹出一个123的对话框
 
-            $( "#dialog" ).dialog( "open" );
+            editWin();
 
     });//end 5 外圈 opener 结束打开对话框
 
@@ -320,10 +318,17 @@
                     var obj = JSON.parse(result);
                     var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
                     var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
-                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(index){
-                      table.ajax.reload();
-                      $( "#dialog" ).dialog( "close" );
-                      layer.close(index);
+                    // layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(index){
+                    //   table.ajax.reload();
+                    //   $( "#dialog" ).dialog( "close" );
+                    //   layer.close(index);
+                    // });
+                    layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(indexone){
+                      layer.close(indexone);
+                      if(obj.message.indexOf('重复')==-1){
+                        layer.close(index);
+                        table.ajax.reload();
+                      }
                     });
                 }
             });
@@ -333,10 +338,8 @@
 
     //步骤7，关闭修改对话框
     $( "#close" ).click(function() { 
-
-        $( "#dialog" ).dialog( "close" );
-
-        });//end 7 外圈 close
+        layer.close(index);
+    });//end 7 外圈 close
     
 } );//end  $(document).ready
 
@@ -413,7 +416,7 @@
 
 	</div><!-- end div  id="fen_container"-->
 
-	<div id="dialog" title="编辑员工" closed="true" style="width:1000px;height: 690px;padding-left: 20px;">
+	<div id="dialog" style="width:970px;height: 470px;padding-left: 20px;display:none;">
             <div  class="tit_style">
                 <h3>员工管理</h3>
             </div>

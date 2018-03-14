@@ -83,7 +83,7 @@
     </table>
     <!--E--表格结束 -->
     <!-- S--编辑弹窗 -->
-    <div id="dialog" title="角色编辑" class="easyui-dialog" closed="true" style="width:900px;height: 460px;padding-left: 20px;overflow: scroll;left:150px;top:160px;">
+    <div id="dialog" style="width:900px;height: 600px;padding-left: 20px;overflow: scroll;left:150px;top:160px;display:none;">
         <form id="form-id" name="form_data">
             <ul class="tab-style">
                 <li class="fir"><i class="name-s">输入角色</i><input type="text" id="name" class="yzss" name="name" placeholder="请输入角色"></li>
@@ -120,6 +120,7 @@
   }
     $(document).ready(function(){
       var NameOfCookie = "rsList";
+      var index;
       var c = document.cookie.indexOf(NameOfCookie + "=");
       // alert(c);
       if (c != -1) {
@@ -146,13 +147,23 @@
             }//end for
         }
         funBtn();
+        // layer编辑弹窗
+        function editWin(){
+            index = layer.open({
+                type: 1,
+                title:'编辑',
+                closeBtn: 1,
+                area: ['930px', '700px'],
+                content: $('#dialog')       
+            });
+        }
         /*第零步：把datatables插件的警告窗变成控制台打印*/
         $.fn.dataTable.ext.errMode = 'none';
 
         /* 对话框关闭事件 */
         $(function(){
             $('.panel-tool ,#close-d').click(function(){
-                $( "#dialog" ).dialog( "close" );
+                layer.close(index);
             })
         });
         /* 第一步：展示列表数据 */
@@ -257,7 +268,7 @@
                 var node = $("#tree").tree("find",delTableTr.rsList[i]);
                 $('#tree').tree("check",node.target);
             }
-            $( "#dialog" ).dialog( "open" );//出现编辑弹窗
+            editWin();
         });
         /* 第五步：点击提交按钮事件 */
         $("#confirm-d").click(function(){
@@ -295,6 +306,13 @@
                   layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
                     window.location.reload();
                   });
+                  layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(indexone){
+                      layer.close(indexone);
+                      if(obj.message.indexOf('重复')==-1){
+                        layer.close(index);
+                        window.location.reload();
+                      }
+                    });
                 }
             })
         });
