@@ -11,6 +11,7 @@
     <script src="../js/layer.js"></script>
     <link  rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
     <link  rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/gray/easyui.css"/>
+    <link   rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/layui.css"/>
     <link  rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/QD_3a2.css"/>
     <style>
     		.dataTables_wrapper{
@@ -51,6 +52,13 @@
             }
             table.dataTable.display tbody tr.even td.sorting_1{
                 background-color: white;
+            }
+            .layui-input{
+                border-radius: 5px;
+            }
+            .layui-input-block{
+                margin-left: 0;
+                width:250px;
             }
     	</style>
     <script>
@@ -102,7 +110,11 @@
                     title:'编辑',
                     closeBtn: 1,
                     area: ['400px', '480px'],
-                    content: $('#dialog')       
+                    content: $('#dialog'),
+                    end:function(){
+                        layer.close(index);
+                        $('#dialog').css("display","none");
+                    }
                 });
             }
             /*第零步：把datatables插件的警告窗变成控制台打印*/
@@ -175,10 +187,11 @@
                     layer.alert(JSON.parse(result).message,{skin:'layui-layer-molv',closeBtn:1,anim:5,icon:1});
 //                    window.location.reload();
                     tabData.row('.selected').remove().draw( false );//图形删除，没有传到后台接口
+                      layer.close(index);
                   }
                 });//end $.ajax
                   /* 弹窗事件 */
-                layer.close(index);
+
               });
              });
             /* 第四步：点击编辑按钮出现弹窗 */
@@ -223,12 +236,15 @@
                 var objSet = {};
                 objSet = JSON.parse(result);
                 var objDate = objSet.data;
-                $("#ffSel").combobox({
-                    data:objDate,
-                    valueField:"uuid",
-                    textField:"name",
-                    multiple:false,
-                    selectOnNavigation: false
+                var html = '';
+//                console.log(objDate);
+                for(var i=0;i<objDate.length;i++){
+                    html+='<option value='+objDate[i].uuid+'>'+objDate[i].name+'</option>'
+                }
+                $('#ffSel').append(html);
+                layui.use('form',function () {
+                    var form = layui.form;
+                    form.render();
                 });
             }
 
@@ -249,7 +265,16 @@
                     arr[i]=selShhuz[i].uuid;
                 }
                 $('#infoSel').combobox('setValues',arr);
-                $('#ffSel').combobox('setValues',[delTableTr.empUuid]);
+                var dd= $('#ffSel option');
+                var ddValue = [];
+                for(var i=0; i<dd.length;i++){
+                    ddValue[i] = dd[i].attributes.value.nodeValue;
+                    $('#sel dl dd')[i].className = "";
+                    if(ddValue[i] ==delTableTr.empUuid){
+                        $('#sel dl dd')[i].className = "layui-this";
+                        $('#sel .layui-form-select .layui-input')[0].defaultValue = $('#sel dl dd.layui-this')[0].innerHTML;
+                    }
+                }
                 editWin();
 
             });
@@ -262,7 +287,8 @@
                 sendTab.uName = $('input[name = "uName"]')[0].value;
                 sendTab.uLogUser = $('input[name = "uLogUser"]')[0].value;
                 sendTab.uPassWord = $('input[name="uPassWord"]')[0].value;
-                sendTab.empUuid = $('#ffSel').combobox("getValues")[0];
+//                sendTab.empUuid = $('#ffSel').combobox("getValues")[0];
+                sendTab.empUuid =  $("#ffSel option:selected").attr('value');
                 sendTab.roleList = $('#infoSel').combobox("getValues");
                 console.log(sendTab);
                 if(sendTab.uName==""||sendTab.uName==null){
@@ -296,8 +322,12 @@
                       var obj = JSON.parse(result);
                       var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
                       var j = obj.message.indexOf('重复')==-1 ? 5 : 6;
-                      layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(){
-                        window.location.reload();
+                      layer.alert(obj.message,{skin:'layui-layer-molv',closeBtn:1,anim:j,icon:i}, function(indexone){
+                          layer.close(indexone);
+                          if(obj.message.indexOf('重复')==-1){
+                              layer.close(index);
+                              window.location.reload();
+                          }
                       });
                     }
                 });
@@ -314,8 +344,10 @@
             $('.combo').css("width","250px");
             /* 对话框关闭事件 */
 
-            $('.panel-tool ,#close-d').click(function(){
-                 layer.close(index);
+            $('#close-d').click(function(){
+                layer.close(index);
+                $('#dialog').css("display","none");
+
             });
         });
     </script>
@@ -359,8 +391,8 @@
     <!--E--表格结束 -->
 </div>
 <!-- S--编辑弹窗 -->
-<div id="dialog" style="width:370px;height: 430px;padding-left: 20px;left:300px;top:160px;display:none;">
-    <form id="form-id" name="form_data">
+<div id="dialog" style="width:370px;height: 430px;padding-left: 20px;left:300px;top:160px;display:none;box-sizing: border-box">
+    <form id="form-id" name="form_data" class="layui-form">
         <table class="tab-style">
             <tr>
                 <td class="name-s" style="padding-left:0">用户姓名</td>
@@ -379,11 +411,13 @@
                 <input id="infoSel" class="easyui-combobox yzss"data-options="editable:false" name="roleList" style="width:250px;height: 34px;">
             </td>
             </tr>
-            <tr>
-            <td class="name-s" style="padding-left:0">公司员工</td>
-            <td>
-                <input id="ffSel" class="easyui-combobox yzss"data-options="editable:false" name="empUuid" style="width:250px;height: 34px;">
-            </td>
+            <tr id="sel">
+                <div class="layui-form-item">
+                    <td class="name-s" style="padding-left:0">公司员工</td>
+                    <td>
+                        <div class="layui-input-block"><select name="ffSel" id="ffSel" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter" style="width:250px;height: 34px;"></select></div>
+                    </td>
+                </div>
             </tr>
         </table>
     </form>
@@ -393,5 +427,6 @@
     </div>
 </div>
 <!-- E--编辑弹窗 -->
+<script src="../js/layui.all.js"></script>
 </body>
 </html>
