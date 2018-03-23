@@ -17,6 +17,7 @@
 	  <link   rel="stylesheet" type="text/css" href="jquery-easyui-136/themes/icon.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/datatables.css"/>
     <link   rel="stylesheet" type="text/css" href="DataTables/Buttons-1.4.2/css/buttons.dataTables.css"/>
+    <link   rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/layui.css"/>
     <link rel="stylesheet" type="text/css" href="../HMcode_QD/HMcss/2a2.css">
 
 	
@@ -53,6 +54,13 @@
         }
         .combobox-item{
             padding-left: 13px;
+        }
+        .layui-input{
+            border-radius: 5px;
+        }
+        .layui-input-block{
+            margin-left: 0;
+            width:200px;
         }
     </style>
 	<script type="text/javascript">
@@ -258,13 +266,22 @@
       });
       //动态创建下拉框
       function huiFuncR4(result){
-        var a2dataR4 = JSON.parse(result).data;
-        $('#depart').combobox({
-          data: a2dataR4,
-          valueField: 'name',
-          textField: 'name',
-          selectOnNavigation: false
-        });
+          var objSet = {};
+          objSet = JSON.parse(result);
+          var objDate = objSet.data;
+          var html = '';
+//                console.log(objDate);
+          for(var i=0;i<objDate.length;i++){
+              html+='<option value='+objDate[i].uuid+'>'+objDate[i].name+'</option>'
+          }
+          $('#depart').append(html);
+          layui.use('form',function () {
+              var form = layui.form;
+              form.render();
+          });
+
+//        console.log(objDate);
+
       }
     //步骤5，编辑打开事件
     $( "#opener" ).click(function() {
@@ -281,10 +298,23 @@
          document.ffname.claTeacher.value= delRowData.claTeacher;
          document.ffname.sex.value= delRowData.sex;
          var workDate = delRowData.workDate;
-         var depart = delRowData.depart;
-         console.log(depart);
+//         var depart = delRowData.depart;
+
+
+        var dd= $('#depart option');
+        var ddValue = [];
+        for(var i=0; i<dd.length;i++){
+            ddValue[i] = dd[i].innerHTML;
+            $('#sel dl dd')[i].className = "";
+            if(ddValue[i] ==delRowData.depart){
+                $('#sel dl dd')[i].className = "layui-this";
+                $('#sel .layui-form-select .layui-input')[0].defaultValue = $('#sel dl dd.layui-this')[0].innerHTML;
+            }
+        }
+        console.log(ddValue);
+        console.log(delRowData.depart);
+
          $('#workDate').datebox('setValue', workDate);
-         $('#depart').combobox('setValue', depart);
          document.ffname.fullhalf.value= delRowData.fullhalf;
          document.ffname.jobRemark.value= delRowData.jobRemark;
 
@@ -306,7 +336,8 @@
             send_edit_data = $("#ffname").serializeObject();
             send_edit_data.uuid = delRowData.uuid;
             send_edit_data.workDate = $('#workDate').datebox('getValue');
-            send_edit_data.depart = $('#depart').combobox('getValue');
+//            send_edit_data.depart = $('#depart').combobox('getValue');
+            send_edit_data.depart =  $("#depart option:selected")[0].innerHTML;
             $.ajax({
                 
                 url:"/QDcrm/aaEmp?qqiu=edit",
@@ -332,6 +363,8 @@
                     });
                 }
             });
+
+            console.log(send_edit_data);
 
 
     });//end 6 外圈 submitForm
@@ -420,20 +453,24 @@
             <div  class="tit_style">
                 <h3>员工管理</h3>
             </div>
-                <form id="ffname" name="ffname" method="post" > 
+                <form id="ffname" name="ffname" method="post" class="layui-form" >
 
                 <table id="header_3_tb1" class="tab-style">
                     <!-- 第一行 -->
                     <tr>
                     <td class="name-s" style="padding-left:0">姓名</td>
                     <td><input  type="text" name="name" class="yzss" placeholder="请输入姓名"> </td>
-                    <td class="name-s">性别</td>
-                    <td>
-                        <select  name="sex" class="yzss sel_s">
-                            <option value="男">男</option>
-                            <option value="女">女</option>
-                        </select>
-                    </td>
+                        <div class="layui-form-item">
+                            <td class="name-s">性别</td>
+                            <td>
+                                <div class="layui-input-block">
+                                <select  name="sex" class="yzss">
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                                </div>
+                            </td>
+                        </div>
                     <td  class="name-s">入职时间</td>
                     <td><input id="workDate" name="workDate" type="text" class="easyui-datebox yzss" required="required" ></td>
                     </tr>
@@ -452,18 +489,15 @@
                     <!-- 第二行结束 -->
                     <!-- 第三行开始 -->
 
-                    <tr>
-                    <td  class="name-s" style="padding-left:0">部门</td>
-                    <td>
-                        <!--<select  name="depart" class="yzss sel_s">-->
-                            <!--<option >请选择</option>-->
-                            <!--<option value="产品部">产品部</option>-->
-                            <!--<option value="市场部">市场部</option>-->
-                            <!--<option value="教学部">教学部</option>-->
-                            <!--<option value="人事行政部">人事行政部</option>-->
-                        <!--</select>-->
-                        <input  type="text" name="depart" id="depart" data-options="editable:false" class="easyui-combobox sel_s yzss"style="height:34px;"  comboname="depart">
-                    </td>
+                    <tr id="sel">
+                        <div class="layui-form-item">
+                        <td  class="name-s" style="padding-left:0">部门</td>
+                        <td>
+                            <div class="layui-input-block">
+                                <select name="depart" id="depart" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter" style="width:250px;height: 34px;"></select>
+                            </div>
+                        </td>
+                        </div>
                     <td class="name-s">职位</td>
                     <td>
                         <input  type="text" name="job" class="yz-box yzss " placeholder="请输入职位">
@@ -549,4 +583,5 @@
         });
     })
 </script>
+<script src="../js/layui.all.js"></script>
 </html>

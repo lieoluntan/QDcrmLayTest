@@ -292,7 +292,7 @@
         var delRowData = {};
         //获取选择那一行的数据
          delRowData = table.row('.selected').data();
-         console.log(delRowData.moneyRate);
+         console.log(delRowData);
          document.ffname2a2.name.value= delRowData.name;
          document.ffname2a2.sex.value= delRowData.sex;
          document.ffname2a2.weixin.value= delRowData.weixin;
@@ -300,8 +300,19 @@
          document.ffname2a2.company.value= delRowData.company;
         $('#moneyRate').numberbox('setValue',delRowData.moneyRate);
          document.ffname2a2.job.value= delRowData.job;
-        $('#empUuid').val(delRowData.empUuid);
-        console.log(delRowData.empUuid);
+
+        var dd= $('#empUuid option');
+        var ddValue = [];
+        for(var i=0; i<dd.length;i++){
+            ddValue[i] = dd[i].attributes.value.nodeValue;
+            $('#sel dl dd')[i].className = "";
+            if(ddValue[i] ==delRowData.empUuid){
+                $('#sel dl dd')[i].className = "layui-this";
+                $('#sel .layui-form-select .layui-input')[0].defaultValue = $('#sel dl dd.layui-this')[0].innerHTML;
+            }
+        }
+
+
          document.ffname2a2.rank.value= delRowData.rank;
          document.ffname2a2.source.value= delRowData.source;
          document.ffname2a2.remark.value= delRowData.remark;
@@ -463,102 +474,102 @@
         });
     </script>
     <!-- E--公用弹窗 -->
-
-</body>
-<div id="dialog" style="width:950px;height: 540px;padding-left:20px;display:none;">
-    <div  class="tit_style">
-        <h3>基础信息</h3>
-    </div>
-    <form id="ffname2a2" name="ffname2a2" class="layui-form" method="post" >
-        <table class="tab-style">
-            <!-- 第一行 -->
-            <tr>
-                <td class="name-s" style="padding-left:0">姓名</td>
-                <td><input  type="text" name="name" class="yzss" placeholder="请输入姓名"></input></td>
-                <div class="layui-form-item">
-                    <td class="name-s">性别</td>
-                    <td>
-                        <div class="layui-input-block">
-                            <select  name="sex">
-                                <option value="男">男</option>
-                                <option value="女">女</option>
-                            </select>
-                        </div>
-
-                    </td>
-                </div>
-
-                <td class="name-s">手机</td>
-                <td><input  type="text" name="phone" class="yzss" placeholder="请输入电话号码"></input></td>
-            </tr>
-            <!-- 第一行结束 -->
-            <!-- 第二行 -->
-            <tr>
-                <td class="name-s" style="padding-left:0">微信</td>
-                <td>
-                    <input  type="text" name="weixin" class="yzss" placeholder="请输入学号"></input>
-                </td>
-                <td class="name-s">单位</td>
-                <td><input  type="text" name="company" class="yz-box yzss" placeholder="请输入是所在单位"></input></td>
-                <td class="name-s">职位</td>
-                <td><input  type="text" name="job" class="yz-box yzss" placeholder="请输入职位信息"></input></td>
-            </tr>
-            <!-- 第二行结束 -->
-        </table>
-
+    <div id="dialog" style="width:950px;height: 540px;padding-left:20px;display:none;">
         <div  class="tit_style">
-            <h3>其他信息</h3>
+            <h3>基础信息</h3>
         </div>
+        <form id="ffname2a2" name="ffname2a2" class="layui-form" method="post" >
+            <table class="tab-style">
+                <!-- 第一行 -->
+                <tr>
+                    <td class="name-s" style="padding-left:0">姓名</td>
+                    <td><input  type="text" name="name" class="yzss" placeholder="请输入姓名"></input></td>
+                    <div class="layui-form-item">
+                        <td class="name-s">性别</td>
+                        <td>
+                            <div class="layui-input-block">
+                                <select  name="sex">
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
 
-        <table class="tab-style">
-            <!-- 第一行 -->
-            <tr>
-                <td class="name-s" style="padding:0;width:52px;">负责人</td>
-                <td style="margin-left:20px;">
-                    <!-- <input id="empUuid" name="empUuid" data-options="editable:true" class="easyui-combobox yzss" style="width: 200px; height: 36px; color:#646464; display: none;" value="请选择渠道负责人" comboname="empUuid"> -->
-                    <div class="layui-input-block"><select name="empUuid" id="empUuid" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter"></select></div>
-                </td>
-                <div class="layui-form-item">
-                    <td class="name-s" style="padding-right: 0;padding-left:70px; ">渠道等级</td>
-                    <td style="margin-left:20px;" >
-                        <div class="layui-input-block">
-                            <select  name="rank">
-                                <option>A</option>
-                                <option>B</option>
-                                <option>C</option>
-                                <option>D</option>
-                            </select>
-                        </div>
+                        </td>
+                    </div>
 
+                    <td class="name-s">手机</td>
+                    <td><input  type="text" name="phone" class="yzss" placeholder="请输入电话号码"></input></td>
+                </tr>
+                <!-- 第一行结束 -->
+                <!-- 第二行 -->
+                <tr>
+                    <td class="name-s" style="padding-left:0">微信</td>
+                    <td>
+                        <input  type="text" name="weixin" class="yzss" placeholder="请输入学号"></input>
                     </td>
-                </div>
-                <td class="name-s" style="padding-right: 0;padding-left:65px; ">佣金比例</td>
-                <td style="margin-left:20px;">
-                    <input type="text" name="moneyRate" id="moneyRate" class="easyui-numberbox yzss yz-box" style="height: 36px;" placeholder="请输入佣金">
-                </td>
-            </tr>
-            <!-- 第一行结束 -->
-        </table>
+                    <td class="name-s">单位</td>
+                    <td><input  type="text" name="company" class="yz-box yzss" placeholder="请输入是所在单位"></input></td>
+                    <td class="name-s">职位</td>
+                    <td><input  type="text" name="job" class="yz-box yzss" placeholder="请输入职位信息"></input></td>
+                </tr>
+                <!-- 第二行结束 -->
+            </table>
 
-        <table class="tab-style">
-            <tr>
-                <td class="name-s" style="padding-left:0">来源</td>
-                <td><input  type="text" name="source" class="yzss" style="width:870px;" placeholder="请输入渠道来源"></input></td>
-            </tr>
-            <tr>
-                <td class="name-s" style="padding-left:0">备注</td>
-                <td><input  type="text" name="remark" class="yzss" style="width:870px;" value="无"></input></td>
-            </tr>
-            <!-- 第二行结束 -->
-        </table>
+            <div  class="tit_style">
+                <h3>其他信息</h3>
+            </div>
 
-    </form>
-    <!-- 按钮div开始 -->
-    <div class="btn-box" style="margin-right: 20px;">
-        <button  class="easyui-linkbutton btn-xk" id="close">关闭</button>
-        <button  class="easyui-linkbutton btn-qr" id="submitForm">确认</button>
-    </div>
-    <!-- 按钮div结束 -->
-</div><!-- end id=dialog -->
+            <table class="tab-style">
+                <!-- 第一行 -->
+                <tr id="sel">
+                    <td class="name-s" style="padding:0;width:52px;">负责人</td>
+                    <td style="margin-left:20px;">
+                        <!-- <input id="empUuid" name="empUuid" data-options="editable:true" class="easyui-combobox yzss" style="width: 200px; height: 36px; color:#646464; display: none;" value="请选择渠道负责人" comboname="empUuid"> -->
+                        <div class="layui-input-block"><select name="empUuid" id="empUuid" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter"></select></div>
+                    </td>
+                    <div class="layui-form-item">
+                        <td class="name-s" style="padding-right: 0;padding-left:70px; ">渠道等级</td>
+                        <td style="margin-left:20px;" >
+                            <div class="layui-input-block">
+                                <select  name="rank">
+                                    <option>A</option>
+                                    <option>B</option>
+                                    <option>C</option>
+                                    <option>D</option>
+                                </select>
+                            </div>
+
+                        </td>
+                    </div>
+                    <td class="name-s" style="padding-right: 0;padding-left:65px; ">佣金比例</td>
+                    <td style="margin-left:20px;">
+                        <input type="text" name="moneyRate" id="moneyRate" class="easyui-numberbox yzss yz-box" style="height: 36px;" placeholder="请输入佣金">
+                    </td>
+                </tr>
+                <!-- 第一行结束 -->
+            </table>
+
+            <table class="tab-style">
+                <tr>
+                    <td class="name-s" style="padding-left:0">来源</td>
+                    <td><input  type="text" name="source" class="yzss" style="width:870px;" placeholder="请输入渠道来源"></input></td>
+                </tr>
+                <tr>
+                    <td class="name-s" style="padding-left:0">备注</td>
+                    <td><input  type="text" name="remark" class="yzss" style="width:870px;" value="无"></input></td>
+                </tr>
+                <!-- 第二行结束 -->
+            </table>
+
+        </form>
+        <!-- 按钮div开始 -->
+        <div class="btn-box" style="margin-right: 20px;">
+            <button  class="easyui-linkbutton btn-xk" id="close">关闭</button>
+            <button  class="easyui-linkbutton btn-qr" id="submitForm">确认</button>
+        </div>
+        <!-- 按钮div结束 -->
+    </div><!-- end id=dialog -->
+</body>
+
 <script src="../js/layui.all.js"></script>
 </html>
