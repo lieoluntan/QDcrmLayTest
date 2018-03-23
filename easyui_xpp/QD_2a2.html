@@ -280,8 +280,6 @@
               form.render();
           });
 
-//        console.log(objDate);
-
       }
     //步骤5，编辑打开事件
     $( "#opener" ).click(function() {
@@ -296,24 +294,31 @@
          document.ffname.job.value= delRowData.job;
          document.ffname.remark.value= delRowData.remark;
          document.ffname.claTeacher.value= delRowData.claTeacher;
-         document.ffname.sex.value= delRowData.sex;
+        var sexdd = $('#sextd dl dd');
+        for(var i=0;i<sexdd.length;i++){
+            sexdd[i].className = "";
+            if(sexdd[i].innerHTML == delRowData.sex){
+                sexdd[i].className = "layui-this";
+                console.log($('#sextd .layui-form-select .layui-input')[0].defaultValue);
+                $('#sextd .layui-form-select .layui-input')[0].defaultValue =delRowData.sex;
+                console.log(delRowData.sex);
+            }
+        }
          var workDate = delRowData.workDate;
 //         var depart = delRowData.depart;
 
 
-        var dd= $('#depart option');
-        var ddValue = [];
+        var dd= $('#sel dl dd');
         for(var i=0; i<dd.length;i++){
-            ddValue[i] = dd[i].innerHTML;
-            $('#sel dl dd')[i].className = "";
-            if(ddValue[i] ==delRowData.depart){
-                $('#sel dl dd')[i].className = "layui-this";
-                $('#sel .layui-form-select .layui-input')[0].defaultValue = $('#sel dl dd.layui-this')[0].innerHTML;
+            dd[i].className = "";
+            if(dd[i].innerHTML ==delRowData.depart){
+                dd[i].className = "layui-this";
+                $('#sel dl dd')[i].value = $('#sel dl dd.layui-this')[0].attributes[0].nodeValue;
+//                console.log($('#sel .layui-form-select .layui-input')[0].defaultValue);
+                $('#sel .layui-form-select .layui-input')[0].defaultValue =delRowData.depart ;
             }
         }
-        console.log(ddValue);
-        console.log(delRowData.depart);
-
+//            console.log(delRowData.depart);
          $('#workDate').datebox('setValue', workDate);
          document.ffname.fullhalf.value= delRowData.fullhalf;
          document.ffname.jobRemark.value= delRowData.jobRemark;
@@ -338,6 +343,7 @@
             send_edit_data.workDate = $('#workDate').datebox('getValue');
 //            send_edit_data.depart = $('#depart').combobox('getValue');
             send_edit_data.depart =  $("#depart option:selected")[0].innerHTML;
+            send_edit_data.sex =$('#sextd dl dd.layui-this')[0].innerHTML;
             $.ajax({
                 
                 url:"/QDcrm/aaEmp?qqiu=edit",
@@ -462,9 +468,9 @@
                     <td><input  type="text" name="name" class="yzss" placeholder="请输入姓名"> </td>
                         <div class="layui-form-item">
                             <td class="name-s">性别</td>
-                            <td>
+                            <td id="sextd">
                                 <div class="layui-input-block">
-                                <select  name="sex" class="yzss">
+                                <select  name="sex" id="sex" class="yzss">
                                     <option value="男">男</option>
                                     <option value="女">女</option>
                                 </select>
@@ -489,10 +495,10 @@
                     <!-- 第二行结束 -->
                     <!-- 第三行开始 -->
 
-                    <tr id="sel">
+                    <tr>
                         <div class="layui-form-item">
                         <td  class="name-s" style="padding-left:0">部门</td>
-                        <td>
+                        <td id="sel">
                             <div class="layui-input-block">
                                 <select name="depart" id="depart" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter" style="width:250px;height: 34px;"></select>
                             </div>

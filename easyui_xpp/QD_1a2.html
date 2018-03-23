@@ -294,7 +294,18 @@
          delRowData = table.row('.selected').data();
          console.log(delRowData);
          document.ffname2a2.name.value= delRowData.name;
-         document.ffname2a2.sex.value= delRowData.sex;
+        //                性别的获取
+        var sexdd = $('#sextd dl dd');
+//        console.log($('#sextd dl dd'));
+        for(var i=0;i<sexdd.length;i++){
+            sexdd[i].className = "";
+            if(sexdd[i].innerHTML == delRowData.sex){
+                sexdd[i].className = "layui-this";
+                console.log($('#sextd .layui-form-select .layui-input')[0].defaultValue);
+                $('#sextd .layui-form-select .layui-input')[0].defaultValue =delRowData.sex;
+            }
+        }
+        console.log(sexdd);
          document.ffname2a2.weixin.value= delRowData.weixin;
          document.ffname2a2.phone.value= delRowData.phone;
          document.ffname2a2.company.value= delRowData.company;
@@ -311,9 +322,22 @@
                 $('#sel .layui-form-select .layui-input')[0].defaultValue = $('#sel dl dd.layui-this')[0].innerHTML;
             }
         }
+//        console.log($('#sel .layui-form-select .layui-input'));
+//        console.log(ddValue);
+//        console.log(delRowData.empUuid);
 
-
-         document.ffname2a2.rank.value= delRowData.rank;
+        //                等级值的获取
+        var rankdd = $('#ranktd dl dd');
+//        console.log($('#ranktd dl dd'));
+        for(var i=0;i<rankdd.length;i++){
+            rankdd[i].className = "";
+            if(rankdd[i].innerHTML == delRowData.rank){
+                rankdd[i].className = "layui-this";
+//                        console.log($('#ranktd .layui-form-select .layui-input')[0].defaultValue);
+                $('#ranktd .layui-form-select .layui-input')[0].defaultValue =delRowData.rank;
+//                        console.log(delRowData.rank);
+            }
+        }
          document.ffname2a2.source.value= delRowData.source;
          document.ffname2a2.remark.value= delRowData.remark;
          editWin();
@@ -325,7 +349,7 @@
          $.cookie('ck_rank', delRowData.rank);//等级
          $.cookie('ck_company', delRowData.company);//单位
          $.cookie('ck_job', delRowData.job);//工作
-         console.log($.cookie());
+//         console.log($.cookie());
 
 
     });//end opener 结束打开对话框
@@ -339,10 +363,14 @@
             var delRowData = {};
             //获取选择那一行的数据
             delRowData = table.row('.selected').data();
-            console.log(delRowData);
             // var param = $("#ff").serializeObject();
             var send_edit_data = {};
             send_edit_data = $("#ffname2a2").serializeObject();
+            send_edit_data.rank = $('#ranktd dl dd.layui-this')[0].innerHTML;
+            send_edit_data.empUuid =$('#sel dl dd.layui-this')[0].attributes[0].nodeValue;
+            send_edit_data.sex =$('#sextd dl dd.layui-this')[0].innerHTML;
+            console.log($('#ranktd dl dd.layui-this')[0].innerHTML);
+            console.log($('#sextd dl dd.layui-this')[0].innerHTML);
             send_edit_data.uuid = delRowData.uuid;
             send_edit_data.userUuid = $.cookie("ckUserEmpUuid");
             send_edit_data.userName = $.cookie("ckUserName");
@@ -351,7 +379,7 @@
                 url:"/QDcrm/aaDitch?qqiu=edit",
                 type: "POST",
                 data: JSON.stringify(send_edit_data),
-                contentType: "application/json;charset=UTF-8", 
+                contentType: "application/json;charset=UTF-8",
                 success:function(result){
                     var obj = JSON.parse(result);
                     var i = obj.message.indexOf('重复')==-1 ? 1 : 2;
@@ -486,9 +514,9 @@
                     <td><input  type="text" name="name" class="yzss" placeholder="请输入姓名"></input></td>
                     <div class="layui-form-item">
                         <td class="name-s">性别</td>
-                        <td>
+                        <td id="sextd">
                             <div class="layui-input-block">
-                                <select  name="sex">
+                                <select  name="sex" id="sex">
                                     <option value="男">男</option>
                                     <option value="女">女</option>
                                 </select>
@@ -521,17 +549,17 @@
 
             <table class="tab-style">
                 <!-- 第一行 -->
-                <tr id="sel">
+                <tr>
                     <td class="name-s" style="padding:0;width:52px;">负责人</td>
-                    <td style="margin-left:20px;">
+                    <td id="sel" style="margin-left:20px;">
                         <!-- <input id="empUuid" name="empUuid" data-options="editable:true" class="easyui-combobox yzss" style="width: 200px; height: 36px; color:#646464; display: none;" value="请选择渠道负责人" comboname="empUuid"> -->
                         <div class="layui-input-block"><select name="empUuid" id="empUuid" class="yz-box yzss sel_s" lay-verify="" lay-search lay-filter="selFilter"></select></div>
                     </td>
                     <div class="layui-form-item">
                         <td class="name-s" style="padding-right: 0;padding-left:70px; ">渠道等级</td>
-                        <td style="margin-left:20px;" >
+                        <td id="ranktd" style="margin-left:20px;" >
                             <div class="layui-input-block">
-                                <select  name="rank">
+                                <select  name="rank" id="rank">
                                     <option>A</option>
                                     <option>B</option>
                                     <option>C</option>
